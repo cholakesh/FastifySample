@@ -1,0 +1,42 @@
+
+# https://github.com/docker/awesome-compose
+# services:
+#   server:
+#     build:
+#       context: .
+#     environment:
+#       NODE_ENV: production
+#     ports:
+#       - 3000:3000
+
+version: "3.9"
+
+services:
+  # mongoDB services
+  mongo_db:
+    container_name: db_container
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+    image: mongo:latest
+    restart: always
+    ports:
+      - 27018:27018
+    volumes:
+      - mongo_db:/data/db
+  
+  # Node app
+  app:
+    build: .
+    ports:
+      - 4000:3000
+    environment:
+      PORT: 3000
+      MONGODB_URI: mongodb://mongo_db:27018
+      DB_NAME: myDB
+    depends_on:
+      - mongo_db
+
+volumes:
+  mongo_db: {}
+
